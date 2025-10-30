@@ -41,7 +41,7 @@ const determineRatingBgc = function (rating) {
 const render = function () {
   for (let book of dataSource.books) {
     // DLACZEGO book.rating?! A nie sam rating?
-    ratingBgc = determineRatingBgc(book.rating);
+    const ratingBgc = determineRatingBgc(book.rating);
     const ratingWidth = book.rating * 10;
 
     book.ratingWidth = ratingWidth; //dlaczego tak?
