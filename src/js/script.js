@@ -26,17 +26,34 @@ const templates = {
 };
 const filters = [];
 
+const determineRatingBgc = function (rating) {
+  if (rating < 6) {
+    return 'linear-gradient(to bottom,  #fefcea 0%, #f1da36 100%);';
+  } else if (rating > 6 && rating <= 8) {
+    return 'linear-gradient(to bottom, #b4df5b 0%,#b4df5b 100%);';
+  } else if (rating > 8 && rating <= 9) {
+    return 'linear-gradient(to bottom, #299a0b 0%, #299a0b 100%);';
+  } else if (rating > 9) {
+    return 'linear-gradient(to bottom, #ff0084 0%,#ff0084 100%);';
+  }
+};
+
 const render = function () {
-  for (let book in dataSource.books) {
-    let booksElements = dataSource.books[book];
+  for (let book of dataSource.books) {
+    // DLACZEGO book.rating?! A nie sam rating?
+    ratingBgc = determineRatingBgc(book.rating);
+    const ratingWidth = book.rating * 10;
 
-    const generatedHTML = templates.bookList(booksElements);
+    book.ratingWidth = ratingWidth; //dlaczego tak?
+    book.ratingBgc = ratingBgc; //dlaczego tak?
 
-    booksElements = utils.createDOMFromHTML(generatedHTML);
+    const generatedHTML = templates.bookList(book);
+
+    book = utils.createDOMFromHTML(generatedHTML);
 
     const bookContainer = document.querySelector(select.containerOf.book);
 
-    bookContainer.appendChild(booksElements);
+    bookContainer.appendChild(book);
   }
 };
 
@@ -92,11 +109,9 @@ const initActions = function () {
 initActions();
 
 const filterBooks = function () {
-  // DLACZEGO OF A NIE IN?!
+  //DLACZEGO OF A NIE IN?! Edit: dopiero zobaczyłem, że w dataSource.book to tablica...
   for (let book of dataSource.books) {
     let shouldBeHidden = false;
-
-    // let bookElements = dataSource.books[book];
 
     for (const filter of filters) {
       if (!book.details[filter]) {
@@ -106,6 +121,8 @@ const filterBooks = function () {
     }
     const bookImage = document.querySelector(
       '.book__image[data-id="' + book.id + '"]'
+      // MUSIAŁEM SELEKTOR Z DANYM ATRYBUTEM ZAPISAĆ DO ZMIENNEJ, BO BEZ TEGO WYKONANIE POLECENIA W INSTRUKCJI PONIŻEJ NIE DZIAŁAŁO np
+      // .book__image[data-id="id-of-the-book-here"]
     );
     if (shouldBeHidden == true) {
       bookImage.classList.add('hidden');
