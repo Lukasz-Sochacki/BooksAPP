@@ -8,6 +8,9 @@ const select = {
   images: {
     book: '.book__image',
   },
+  form: {
+    book: 'section.filters',
+  },
 };
 
 const classNames = {
@@ -21,6 +24,7 @@ const templates = {
     document.querySelector(select.templateOf.book).innerHTML
   ),
 };
+const filters = [];
 
 const render = function () {
   for (let book in dataSource.books) {
@@ -48,7 +52,7 @@ const initActions = function () {
     event.preventDefault();
 
     const bookAttribute = clickedElement.getAttribute('data-id');
-    console.log(bookAttribute);
+    // console.log(bookAttribute);
 
     if (
       favoriteBooks.includes(bookAttribute) &&
@@ -63,6 +67,50 @@ const initActions = function () {
     }
     console.log(favoriteBooks);
   });
+
+  const filtersForm = document.querySelector(select.form.book);
+
+  filtersForm.addEventListener('click', function (event) {
+    const clickedElement = event.target;
+
+    if (
+      clickedElement.tagName == 'INPUT' &&
+      clickedElement.type == 'checkbox' &&
+      clickedElement.name == 'filter'
+    ) {
+      if (clickedElement.checked == true) {
+        filters.push(clickedElement.value);
+      } else {
+        filters.splice(filters.indexOf(clickedElement.value), 1);
+      }
+      console.log(filters);
+    }
+    filterBooks();
+  });
 };
 
 initActions();
+
+const filterBooks = function () {
+  // DLACZEGO OF A NIE IN?!
+  for (let book of dataSource.books) {
+    let shouldBeHidden = false;
+
+    // let bookElements = dataSource.books[book];
+
+    for (const filter of filters) {
+      if (!book.details[filter]) {
+        shouldBeHidden = true;
+        break;
+      }
+    }
+    const bookImage = document.querySelector(
+      '.book__image[data-id="' + book.id + '"]'
+    );
+    if (shouldBeHidden == true) {
+      bookImage.classList.add('hidden');
+    } else {
+      bookImage.classList.remove('hidden');
+    }
+  }
+};
