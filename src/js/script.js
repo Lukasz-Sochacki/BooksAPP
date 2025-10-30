@@ -42,27 +42,27 @@ const initActions = function () {
   const favoriteBooks = [];
 
   const bookList = document.querySelector(select.containerOf.book);
-  const booksImage = bookList.querySelectorAll(select.images.book);
+  bookList.addEventListener('dblclick', function (event) {
+    const clickedElement = event.target.offsetParent;
 
-  for (let bookImage of booksImage) {
-    bookImage.addEventListener('dblclick', function (event) {
-      event.preventDefault();
-      const bookAttribute = bookImage.getAttribute('data-id');
+    event.preventDefault();
 
-      if (
-        favoriteBooks.includes(bookAttribute) &&
-        bookImage.classList.contains(classNames.book.favoriteBook)
-      ) {
-        bookImage.classList.remove(classNames.book.favoriteBook);
+    const bookAttribute = clickedElement.getAttribute('data-id');
+    console.log(bookAttribute);
 
-        favoriteBooks.splice(favoriteBooks.indexOf(bookAttribute), 1);
-      } else {
-        bookImage.classList.add(classNames.book.favoriteBook);
-        favoriteBooks.push(bookAttribute);
-      }
-      console.log(favoriteBooks);
-    });
-  }
+    if (
+      favoriteBooks.includes(bookAttribute) &&
+      clickedElement.classList.contains(classNames.book.favoriteBook)
+    ) {
+      clickedElement.classList.remove(classNames.book.favoriteBook);
+
+      favoriteBooks.splice(favoriteBooks.indexOf(bookAttribute), 1);
+    } else {
+      clickedElement.classList.add(classNames.book.favoriteBook);
+      favoriteBooks.push(bookAttribute);
+    }
+    console.log(favoriteBooks);
+  });
 };
 
 initActions();
